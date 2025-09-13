@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نموذج زيارة مدرسية - نظام إدارة الزيارات</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #4ca1af);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .section-title {
+            border-right: 4px solid #4ca1af;
+            padding-right: 15px;
+            margin: 25px 0 20px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #2c3e50, #4ca1af);
+            border: none;
+            padding: 10px 25px;
+            font-weight: bold;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4ca1af, #2c3e50);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .required-field::after {
+            content: " *";
+            color: red;
+        }
+        .evaluation-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .evaluation-table th, .evaluation-table td {
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            text-align: center;
+        }
+        .evaluation-table th {
+            background-color: #4ca1af;
+            color: white;
+        }
+        .evaluation-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .evaluation-table tr:hover {
+            background-color: #e9ecef;
+        }
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(135deg, #2c3e50, #4ca1af);
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .nav-tabs .nav-link {
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        .recommendation-box {
+            border: 2px dashed #4ca1af;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #f0f8ff;
+        }
+        .signature-box {
+            border-top: 2px solid #2c3e50;
+            padding-top: 15px;
+            margin-top: 20px;
+        }
+        .print-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+        .rating-scale {
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .progress-bar-section {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .score-badge {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .form-container {
+                box-shadow: none;
+                padding: 0;
+            }
+            .header {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4 mb-5">
+        <!-- Header -->
+        <div class="header text-center">
+            <h1><i class="fas fa-school me-2"></i>نموذج زيارة مدرسية</h1>
+            <p class="mb-0">أداة معارف للملاحظة الصفية (2025/2026) - نظام إدارة الزيارات المدرسية</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar-section no-print">
+            <div class="d-flex justify-content-between mb-2">
+                <span id="step1-tab" class="fw-bold text-primary">المعلومات الأساسية</span>
+                <span id="step2-tab">التقييم</span>
+                <span id="step3-tab">التغذية الراجعة</span>
+                <span id="step4-tab">الملخص</span>
+            </div>
+            <div class="progress" style="height: 20px;">
+                <div id="form-progress" class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs mb-4 no-print" id="visitTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button" role="tab" aria-selected="true">المعلومات الأساسية</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="evaluation-tab" data-bs-toggle="tab" data-bs-target="#evaluation" type="button" role="tab" aria-selected="false">التقييم</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="recommendations-tab" data-bs-toggle="tab" data-bs-target="#recommendations" type="button" role="tab" aria-selected="false">التغذية الراجعة</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary" type="button" role="tab" aria-selected="false">الملخص</button>
+            </li>
+        </ul>
+
+        <!-- Form -->
+        <form method="POST" action="{{ url_for('new_visit') }}">
+            <div class="form-container">
+                <div class="tab-content" id="visitTabsContent">
+                    <!-- Basic Information Tab -->
+                    <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
+                        <h3 class="section-title"><i class="fas fa-info-circle me-2"></i>المعلومات الأساسية</h3>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="school_name" class="form-label required-field">المدرسة</label>
+                                    <input type="text" class="form-control" id="school_name" name="school_name" value="منارات المدينة المنورة" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="visit_date" class="form-label required-field">التاريخ</label>
+                                    <input type="date" class="form-control" id="visit_date" name="visit_date" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="teacher_id" class="form-label required-field">اسم المعلم</label>
+                                    <select class="form-select" id="teacher_id" name="teacher_id" required>
+                                        <option value="" selected disabled>اختر المعلم</option>
+                                        {% for teacher in teachers %}
+                                        <option value="{{ teacher.id }}" data-email="{{ teacher.email }}">{{ teacher.name }} - {{ teacher.email }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="subject" class="form-label required-field">المادة</label>
+                                    <input type="text" class="form-control" id="subject" name="subject" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="lesson_title" class="form-label required-field">عنوان الدرس</label>
+                                    <input type="text" class="form-control" id="lesson_title" name="lesson_title" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label for="grade" class="form-label required-field">الفصل</label>
+                                    <input type="text" class="form-control" id="grade" name="grade" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="supervisor_id" class="form-label required-field">المشرف التربوي</label>
+                                    <select class="form-select" id="supervisor_id" name="supervisor_id" required>
+                                        <option value="" selected disabled>اختر المشرف التربوي</option>
+                                        {% for supervisor in supervisors %}
+                                        <option value="{{ supervisor.id }}">{{ supervisor.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="visit_time" class="form-label required-field">وقت الزيارة</label>
+                                    <input type="time" class="form-control" id="visit_time" name="visit_time" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label for="visit_purpose" class="form-label required-field">هدف الزيارة</label>
+                            <textarea class="form-control" id="visit_purpose" name="visit_purpose" rows="3" required></textarea>
+                        </div>
+
+                        <div class="text-end">
+                            <button type="button" class="btn btn-primary" onclick="switchTab('evaluation')">
+                                التالي <i class="fas fa-arrow-left ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Evaluation Tab -->
+                    <div class="tab-pane fade" id="evaluation" role="tabpanel" aria-labelledby="evaluation-tab">
+                        <h3 class="section-title"><i class="fas fa-clipboard-check me-2"></i>تقييم الأداء - أداة معارف للملاحظة الصفية</h3>
+                        
+                        <div class="alert alert-info">
+                            <h5><i class="fas fa-info-circle me-2"></i>مقياس التقدير</h5>
+                            <div class="row rating-scale">
+                                <div class="col-md-2">0 - غير مقبول</div>
+                                <div class="col-md-2">1 - غير ملاحظ</div>
+                                <div class="col-md-2">2 - متطور</div>
+                                <div class="col-md-2">3 - كفء</div>
+                                <div class="col-md-2">4 - نموذجي ومتميز</div>
+                            </div>
+                        </div>
+
+                        <!-- الإدارة الصفية -->
+                        <h4 class="mt-4 mb-3" style="color: #2c3e50;">أ - الإدارة الصفية</h4>
+                        <table class="evaluation-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">م</th>
+                                    <th width="35%">تفاصيل المجال و المعايير</th>
+                                    <th width="10%">الوزن</th>
+                                    <th width="10%">0</th>
+                                    <th width="10%">1</th>
+                                    <th width="10%">2</th>
+                                    <th width="10%">3</th>
+                                    <th width="10%">4</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>يتم تحديد التوقعات السلوكية والروتين باتساق كما يتم تعزيز أخلاقيات المدرسة/آدابها وتعزيز الاحترام المتبادل بين الطلاب.</td>
+                                    <td>2.0</td>
+                                    <td><input type="radio" name="management_1" value="0" required></td>
+                                    <td><input type="radio" name="management_1" value="1"></td>
+                                    <td><input type="radio" name="management_1" value="2"></td>
+                                    <td><input type="radio" name="management_1" value="3"></td>
+                                    <td><input type="radio" name="management_1" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>يتم تطبيق تحمل تبعات العواقب بشكل عادل ومتسق</td>
+                                    <td>1.0</td>
+                                    <td><input type="radio" name="management_2" value="0" required></td>
+                                    <td><input type="radio" name="management_2" value="1"></td>
+                                    <td><input type="radio" name="management_2" value="2"></td>
+                                    <td><input type="radio" name="management_2" value="3"></td>
+                                    <td><input type="radio" name="management_2" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>وجود علاقة إيجابية مع الطلاب وتعزيز الاحترام المتبادل والتعاون.</td>
+                                    <td>2.0</td>
+                                    <td><input type="radio" name="management_3" value="0" required></td>
+                                    <td><input type="radio" name="management_3" value="1"></td>
+                                    <td><input type="radio" name="management_3" value="2"></td>
+                                    <td><input type="radio" name="management_3" value="3"></td>
+                                    <td><input type="radio" name="management_3" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>التأكد من تركيز الطلاب على إنجاز المهام والأنشطة بفاعلية.</td>
+                                    <td>2.0</td>
+                                    <td><input type="radio" name="management_4" value="0" required></td>
+                                    <td><input type="radio" name="management_4" value="1"></td>
+                                    <td><input type="radio" name="management_4" value="2"></td>
+                                    <td><input type="radio" name="management_4" value="3"></td>
+                                    <td><input type="radio" name="management_4" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>الإدارة الفاعلة للوقت كمكون أساس لتنفيذ خطة الدرس.</td>
+                                    <td>1.0</td>
+                                    <td><input type="radio" name="management_5" value="0" required></td>
+                                    <td><input type="radio" name="management_5" value="1"></td>
+                                    <td><input type="radio" name="management_5" value="2"></td>
+                                    <td><input type="radio" name="management_5" value="3"></td>
+                                    <td><input type="radio" name="management_5" value="4"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- الممارسات التدريسية -->
+                        <h4 class="mt-4 mb-3" style="color: #2c3e50;">ب - الممارسات التدريسية</h4>
+                        <table class="evaluation-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">م</th>
+                                    <th width="35%">تفاصيل المجال و المعايير</th>
+                                    <th width="10%">الوزن</th>
+                                    <th width="10%">0</th>
+                                    <th width="10%">1</th>
+                                    <th width="10%">2</th>
+                                    <th width="10%">3</th>
+                                    <th width="10%">4</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>ظهور إتقان وإلمام المعلم بالموضوع بوضوح من خلال الشرح الدقيق للمادة التعليمية والمناقشات المتعمقة وتصحيح المفاهيم الخاطئة لدى الطلاب.</td>
+                                    <td>1.5</td>
+                                    <td><input type="radio" name="teaching_1" value="0" required></td>
+                                    <td><input type="radio" name="teaching_1" value="1"></td>
+                                    <td><input type="radio" name="teaching_1" value="2"></td>
+                                    <td><input type="radio" name="teaching_1" value="3"></td>
+                                    <td><input type="radio" name="teaching_1" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>بث روح الشغف والحماس أثناء الحصة، بحيث يكون المعلم محفزاً وملهماً للطلاب.</td>
+                                    <td>1.0</td>
+                                    <td><input type="radio" name="teaching_2" value="0" required></td>
+                                    <td><input type="radio" name="teaching_2" value="1"></td>
+                                    <td><input type="radio" name="teaching_2" value="2"></td>
+                                    <td><input type="radio" name="teaching_2" value="3"></td>
+                                    <td><input type="radio" name="teaching_2" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>وضوح اللغة من حيث فصاحتها ومعدل سرعتها وتغيير نبراتها بحسب الموقف التعليمي.</td>
+                                    <td>1.5</td>
+                                    <td><input type="radio" name="teaching_3" value="0" required></td>
+                                    <td><input type="radio" name="teaching_3" value="1"></td>
+                                    <td><input type="radio" name="teaching_3" value="2"></td>
+                                    <td><input type="radio" name="teaching_3" value="3"></td>
+                                    <td><input type="radio" name="teaching_3" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>التسلسل المنطقي ، والمشاركة ، والإلهام ، والتحفيز ، والحماس ، واستخدام النماذج والقواعد لتحديد توقعات التعلم.</td>
+                                    <td>1.0</td>
+                                    <td><input type="radio" name="teaching_4" value="0" required></td>
+                                    <td><input type="radio" name="teaching_4" value="1"></td>
+                                    <td><input type="radio" name="teaching_4" value="2"></td>
+                                    <td><input type="radio" name="teaching_4" value="3"></td>
+                                    <td><input type="radio" name="teaching_4" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>استخدام تقنيات/استراتيجيات التدريس المناسبة/الفعالة وتغييرها عند الضرورة (طرح الأسئلة/المناقشة/المهام العملية وما إلى ذلك) ابتكار تقنيات جديدة.</td>
+                                    <td>1.5</td>
+                                    <td><input type="radio" name="teaching_5" value="0" required></td>
+                                    <td><input type="radio" name="teaching_5" value="1"></td>
+                                    <td><input type="radio" name="teaching_5" value="2"></td>
+                                    <td><input type="radio" name="teaching_5" value="3"></td>
+                                    <td><input type="radio" name="teaching_5" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>يستخدم استراتيجيات مختلفة لتطبيق التمايز في التعلم (حسب مخرجات تعلم كل طالب والدعم المقدم له) لضمان مشاركة جميع المتعلمين في التعلم وفقًا لاحتياجاتهم.</td>
+                                    <td>1.0</td>
+                                    <td><input type="radio" name="teaching_6" value="0" required></td>
+                                    <td><input type="radio" name="teaching_6" value="1"></td>
+                                    <td><input type="radio" name="teaching_6" value="2"></td>
+                                    <td><input type="radio" name="teaching_6" value="3"></td>
+                                    <td><input type="radio" name="teaching_6" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>التركيز على ربط المحتوى بالحياة الواقعية وبالمواد الأخرى.</td>
+                                    <td>0.5</td>
+                                    <td><input type="radio" name="teaching_7" value="0" required></td>
+                                    <td><input type="radio" name="teaching_7" value="1"></td>
+                                    <td><input type="radio" name="teaching_7" value="2"></td>
+                                    <td><input type="radio" name="teaching_7" value="3"></td>
+                                    <td><input type="radio" name="teaching_7" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>دعم عمليتي التعليم والتعلم بتوظيف التكنولوجيا والموارد المناسبة</td>
+                                    <td>1.0</td>
+                                    <td><input type="radio" name="teaching_8" value="0" required></td>
+                                    <td><input type="radio" name="teaching_8" value="1"></td>
+                                    <td><input type="radio" name="teaching_8" value="2"></td>
+                                    <td><input type="radio" name="teaching_8" value="3"></td>
+                                    <td><input type="radio" name="teaching_8" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td>خلق بيئة تعليمية محفزة ومفضية لأنشطة تركز على الطالب وتمنحه فرصاً للاختيار والتعاون والابتكار والتعبير عن الآراء ومشاركتها مع الآخرين</td>
+                                    <td>1.0</td>
+                                    <td><input type="radio" name="teaching_9" value="0" required></td>
+                                    <td><input type="radio" name="teaching_9" value="1"></td>
+                                    <td><input type="radio" name="teaching_9" value="2"></td>
+                                    <td><input type="radio" name="teaching_9" value="3"></td>
+                                    <td><input type="radio" name="teaching_9" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>10</td>
+                                    <td>يدمج المهام الصعبة التي تتطلب تفكيرًا عالي المستوى أو مهارات عملية تنمي عقلية الطالب وكفاءته الذاتية</td>
+                                    <td>1.0</td>
+                                    <td><input type="radio" name="teaching_10" value="0" required></td>
+                                    <td><input type="radio" name="teaching_10" value="1"></td>
+                                    <td><input type="radio" name="teaching_10" value="2"></td>
+                                    <td><input type="radio" name="teaching_10" value="3"></td>
+                                    <td><input type="radio" name="teaching_10" value="4"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- الملاحظة والتغذية الراجعة -->
+                        <h4 class="mt-4 mb-3" style="color: #2c3e50;">ج - الملاحظة والتغذية الراجعة</h4>
+                        <table class="evaluation-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">م</th>
+                                    <th width="35%">تفاصيل المجال و المعايير</th>
+                                    <th width="10%">الوزن</th>
+                                    <th width="10%">0</th>
+                                    <th width="10%">1</th>
+                                    <th width="10%">2</th>
+                                    <th width="10%">3</th>
+                                    <th width="10%">4</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>الاستخدام الفعال لأدوات التقويم التكويني المناسبة (لضبط التعليم). التأكد من أن جميع المتعلمين ينتجون أدلة على التعلم</td>
+                                    <td>2.0</td>
+                                    <td><input type="radio" name="feedback_1" value="0" required></td>
+                                    <td><input type="radio" name="feedback_1" value="1"></td>
+                                    <td><input type="radio" name="feedback_1" value="2"></td>
+                                    <td><input type="radio" name="feedback_1" value="3"></td>
+                                    <td><input type="radio" name="feedback_1" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>الاستخدام الفعال للنماذج / القواعد.</td>
+                                    <td>0.5</td>
+                                    <td><input type="radio" name="feedback_2" value="0" required></td>
+                                    <td><input type="radio" name="feedback_2" value="1"></td>
+                                    <td><input type="radio" name="feedback_2" value="2"></td>
+                                    <td><input type="radio" name="feedback_2" value="3"></td>
+                                    <td><input type="radio" name="feedback_2" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>توفير ملاحظات بناءة ومشجعة (مكتوبة أو شفهية أو بوسائل أخرى)</td>
+                                    <td>1.0</td>
+                                    <td><input type="radio" name="feedback_3" value="0" required></td>
+                                    <td><input type="radio" name="feedback_3" value="1"></td>
+                                    <td><input type="radio" name="feedback_3" value="2"></td>
+                                    <td><input type="radio" name="feedback_3" value="3"></td>
+                                    <td><input type="radio" name="feedback_3" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>الاهتمام بالطلاب والترحيب باستفساراتهم وم مشاركاتهم، دون خوف من ردود الفعل السلبية، وإظهار التعاطف تجاه جميع الطلاب</td>
+                                    <td>1.5</td>
+                                    <td><input type="radio" name="feedback_4" value="0" required></td>
+                                    <td><input type="radio" name="feedback_4" value="1"></td>
+                                    <td><input type="radio" name="feedback_4" value="2"></td>
+                                    <td><input type="radio" name="feedback_4" value="3"></td>
+                                    <td><input type="radio" name="feedback_4" value="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>توفير الدعم للأفراد والمجموعات و/أو الفصل بأكمله وفقًا لاحتياجات الطلاب مع الحفاظ على كرامة المتعلمين</td>
+                                    <td>1.0</td>
+                                    <td><input type="radio" name="feedback_5" value="0" required></td>
+                                    <td><input type="radio" name="feedback_5" value="1"></td>
+                                    <td><input type="radio" name="feedback_5" value="2"></td>
+                                    <td><input type="radio" name="feedback_5" value="3"></td>
+                                    <td><input type="radio" name="feedback_5" value="4"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" onclick="switchTab('basic')">
+                                <i class="fas fa-arrow-right me-2"></i> السابق
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="switchTab('recommendations')">
+                                التالي <i class="fas fa-arrow-left ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recommendations Tab -->
+                    <div class="tab-pane fade" id="recommendations" role="tabpanel" aria-labelledby="recommendations-tab">
+                        <h3 class="section-title"><i class="fas fa-lightbulb me-2"></i>التغذية الراجعة ومرئيات الملاحظة</h3>
+                        
+                        <div class="recommendation-box mb-4">
+                            <div class="form-group">
+                                <label for="feedback_text_1" class="form-label required-field">التغذية الراجعة (1)</label>
+                                <textarea class="form-control" id="feedback_text_1" name="feedback_text_1" rows="3" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="recommendation-box mb-4">
+                            <div class="form-group">
+                                <label for="feedback_text_2" class="form-label">التغذية الراجعة (2)</label>
+                                <textarea class="form-control" id="feedback_text_2" name="feedback_text_2" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label for="suggestions" class="form-label">التوصيات والمقترحات</label>
+                            <textarea class="form-control" id="suggestions" name="suggestions" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label for="follow_up_date" class="form-label">موعد المتابعة</label>
+                            <input type="date" class="form-control" id="follow_up_date" name="follow_up_date">
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" onclick="switchTab('evaluation')">
+                                <i class="fas fa-arrow-right me-2"></i> السابق
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="switchTab('summary')">
+                                التالي <i class="fas fa-arrow-left ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Summary Tab -->
+                    <div class="tab-pane fade" id="summary" role="tabpanel" aria-labelledby="summary-tab">
+                        <h3 class="section-title"><i class="fas fa-file-alt me-2"></i>ملخص الزيارة</h3>
+                        
+                        <div class="alert alert-info">
+                            <h5><i class="fas fa-info-circle me-2"></i>مراجعة المعلومات</h5>
+                            <p class="mb-0">يرجى مراجعة المعلومات المدخلة قبل حفظ النموذج</p>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-primary text-white">المعلومات الأساسية</div>
+                                    <div class="card-body">
+                                        <p><strong>المدرسة:</strong> <span id="summary_school"></span></p>
+                                        <p><strong>التاريخ:</strong> <span id="summary_date"></span></p>
+                                        <p><strong>المعلم:</strong> <span id="summary_teacher"></span></p>
+                                        <p><strong>البريد الإلكتروني:</strong> <span id="summary_teacher_email"></span></p>
+                                        <p><strong>المادة:</strong> <span id="summary_subject"></span></p>
+                                        <p><strong>عنوان الدرس:</strong> <span id="summary_lesson"></span></p>
+                                        <p><strong>الفصل:</strong> <span id="summary_grade"></span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header bg-success text-white">نتائج التقييم</div>
+                                    <div class="card-body">
+                                        <p><strong>الإدارة الصفية:</strong> <span id="summary_management_score" class="score-badge"></span></p>
+                                        <p><strong>الممارسات التدريسية:</strong> <span id="summary_teaching_score" class="score-badge"></span></p>
+                                        <p><strong>الملاحظة والتغذية الراجعة:</strong> <span id="summary_feedback_score" class="score-badge"></span></p>
+                                        <p><strong>المجموع الكلي:</strong> <span id="summary_total_score" class="score-badge"></span></p>
+                                        <p><strong>النسبة المئوية:</strong> <span id="summary_percentage" class="score-badge"></span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mb-4">
+                            <div class="card-header bg-info text-white">التغذية الراجعة والتوصيات</div>
+                            <div class="card-body">
+                                <p><strong>التغذية الراجعة (1):</strong> <span id="summary_feedback1"></span></p>
+                                <p><strong>التغذية الراجعة (2):</strong> <span id="summary_feedback2"></span></p>
+                                <p><strong>التوصيات والمقترحات:</strong> <span id="summary_suggestions"></span></p>
+                                <p><strong>موعد المتابعة:</strong> <span id="summary_followup"></span></p>
+                            </div>
+                        </div>
+
+                        <div class="signature-box">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="supervisor_signature" class="form-label required-field">توقيع المشرف</label>
+                                        <input type="text" class="form-control" id="supervisor_signature" name="supervisor_signature" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="visit_status" class="form-label required-field">حالة الزيارة</label>
+                                        <select class="form-select" id="visit_status" name="visit_status" required>
+                                            <option value="مكتملة">مكتملة</option>
+                                            <option value="معلقة">معلقة</option>
+                                            <option value="ملغاة">ملغاة</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="form-label">إرسال نسخة للمعلم</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="send_email" name="send_email" checked>
+                                <label class="form-check-label" for="send_email">إرسال نسخة من التقرير إلى البريد الإلكتروني للمعلم</label>
+                            </div>
+                            <small class="form-text text-muted" id="email_preview">سيتم الإرسال إلى: <span id="teacher_email_preview"></span></small>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-secondary" onclick="switchTab('recommendations')">
+                                <i class="fas fa-arrow-right me-2"></i> السابق
+                            </button>
+                            <div>
+                                <button type="button" class="btn btn-info me-2" onclick="sendEmailPreview()">
+                                    <i class="fas fa-envelope me-2"></i> إرسال بالبريد
+                                </button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save me-2"></i> حفظ الزيارة
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Print Button -->
+        <button class="btn btn-primary print-btn no-print" onclick="window.print()">
+            <i class="fas fa-print me-2"></i> طباعة النموذج
+        </button>
+    </div>
+
+    <!-- Bootstrap & jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Function to switch between tabs
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-pane').forEach(tab => {
+                tab.classList.remove('show', 'active');
+            });
+            
+            // Show the selected tab
+            document.getElementById(tabName).classList.add('show', 'active');
+            
+            // Update active tab in navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`[data-bs-target="#${tabName}"]`).classList.add('active');
+            
+            // Update progress bar
+            updateProgressBar(tabName);
+            
+            // Update summary if we're on the summary tab
+            if (tabName === 'summary') {
+                updateSummary();
+            }
+        }
+        
+        // Function to update progress bar
+        function updateProgressBar(tabName) {
+            let progress = 25;
+            
+            switch(tabName) {
+                case 'evaluation':
+                    progress = 50;
+                    break;
+                case 'recommendations':
+                    progress = 75;
+                    break;
+                case 'summary':
+                    progress = 100;
+                    break;
+            }
+            
+            const progressBar = document.getElementById('form-progress');
+            progressBar.style.width = `${progress}%`;
+            progressBar.setAttribute('aria-valuenow', progress);
+            progressBar.textContent = `${progress}%`;
+            
+            // Update active step indicator
+            document.querySelectorAll('.progress-bar-section span').forEach(span => {
+                span.classList.remove('fw-bold', 'text-primary');
+            });
+            
+            if (progress >= 25) document.getElementById('step1-tab').classList.add('fw-bold', 'text-primary');
+            if (progress >= 50) document.getElementById('step2-tab').classList.add('fw-bold', 'text-primary');
+            if (progress >= 75) document.getElementById('step3-tab').classList.add('fw-bold', 'text-primary');
+            if (progress >= 100) document.getElementById('step4-tab').classList.add('fw-bold', 'text-primary');
+        }
+        
+        // Function to update the summary section with correct calculations
+        function updateSummary() {
+            // Basic information
+            document.getElementById('summary_school').textContent = document.getElementById('school_name').value;
+            document.getElementById('summary_date').textContent = document.getElementById('visit_date').value;
+            
+            const teacherSelect = document.getElementById('teacher_id');
+            const selectedTeacher = teacherSelect.options[teacherSelect.selectedIndex];
+            document.getElementById('summary_teacher').textContent = selectedTeacher.text.split(' - ')[0];
+            document.getElementById('summary_teacher_email').textContent = selectedTeacher.dataset.email;
+            document.getElementById('teacher_email_preview').textContent = selectedTeacher.dataset.email;
+            
+            document.getElementById('summary_subject').textContent = document.getElementById('subject').value;
+            document.getElementById('summary_lesson').textContent = document.getElementById('lesson_title').value;
+            document.getElementById('summary_grade').textContent = document.getElementById('grade').value;
+            
+            // Calculate scores correctly with weights (maximum 4 points per item)
+            let managementScore = 0;
+            let managementMax = 0;
+            const managementWeights = [2.0, 1.0, 2.0, 2.0, 1.0];
+            
+            for (let i = 1; i <= 5; i++) {
+                const selectedValue = document.querySelector(`input[name="management_${i}"]:checked`);
+                if (selectedValue) {
+                    managementScore += parseFloat(selectedValue.value) * managementWeights[i-1];
+                }
+                managementMax += 4 * managementWeights[i-1];
+            }
+            
+            let teachingScore = 0;
+            let teachingMax = 0;
+            const teachingWeights = [1.5, 1.0, 1.5, 1.0, 1.5, 1.0, 0.5, 1.0, 1.0, 1.0];
+            
+            for (let i = 1; i <= 10; i++) {
+                const selectedValue = document.querySelector(`input[name="teaching_${i}"]:checked`);
+                if (selectedValue) {
+                    teachingScore += parseFloat(selectedValue.value) * teachingWeights[i-1];
+                }
+                teachingMax += 4 * teachingWeights[i-1];
+            }
+            
+            let feedbackScore = 0;
+            let feedbackMax = 0;
+            const feedbackWeights = [2.0, 0.5, 1.0, 1.5, 1.0];
+            
+            for (let i = 1; i <= 5; i++) {
+                const selectedValue = document.querySelector(`input[name="feedback_${i}"]:checked`);
+                if (selectedValue) {
+                    feedbackScore += parseFloat(selectedValue.value) * feedbackWeights[i-1];
+                }
+                feedbackMax += 4 * feedbackWeights[i-1];
+            }
+            
+            const totalScore = managementScore + teachingScore + feedbackScore;
+            const totalMax = managementMax + teachingMax + feedbackMax;
+            const percentage = totalMax > 0 ? ((totalScore / totalMax) * 100).toFixed(1) : '0.0';
+            
+            document.getElementById('summary_management_score').textContent = `${managementScore.toFixed(1)}/${managementMax.toFixed(1)}`;
+            document.getElementById('summary_teaching_score').textContent = `${teachingScore.toFixed(1)}/${teachingMax.toFixed(1)}`;
+            document.getElementById('summary_feedback_score').textContent = `${feedbackScore.toFixed(1)}/${feedbackMax.toFixed(1)}`;
+            document.getElementById('summary_total_score').textContent = `${totalScore.toFixed(1)}/${totalMax.toFixed(1)}`;
+            document.getElementById('summary_percentage').textContent = `${percentage}%`;
+            
+            // Recommendations
+            document.getElementById('summary_feedback1').textContent = document.getElementById('feedback_text_1').value || 'لا يوجد';
+            document.getElementById('summary_feedback2').textContent = document.getElementById('feedback_text_2').value || 'لا يوجد';
+            document.getElementById('summary_suggestions').textContent = document.getElementById('suggestions').value || 'لا يوجد';
+            document.getElementById('summary_followup').textContent = document.getElementById('follow_up_date').value || 'غير محدد';
+        }
+        
+        // Function to simulate email sending
+        function sendEmailPreview() {
+            const teacherEmail = document.getElementById('teacher_id').options[document.getElementById('teacher_id').selectedIndex].dataset.email;
+            const teacherName = document.getElementById('teacher_id').options[document.getElementById('teacher_id').selectedIndex].text.split(' - ')[0];
+            
+            if (document.getElementById('send_email').checked) {
+                alert(`سيتم إرسال التقرير إلى البريد الإلكتروني للمعلم: ${teacherName} (${teacherEmail})`);
+            } else {
+                alert('يرجى تفعيل خيار إرسال البريد الإلكتروني أولاً');
+            }
+        }
+        
+        // Set current date as default for visit date
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('visit_date').value = today;
+            
+            // Initialize progress bar
+            updateProgressBar('basic');
+            
+            // Update email preview when teacher selection changes
+            document.getElementById('teacher_id').addEventListener('change', function() {
+                const selectedTeacher = this.options[this.selectedIndex];
+                if (selectedTeacher && selectedTeacher.dataset.email) {
+                    document.getElementById('teacher_email_preview').textContent = selectedTeacher.dataset.email;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

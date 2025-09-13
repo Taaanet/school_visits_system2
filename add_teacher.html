@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}إضافة معلم - نظام إدارة الزيارات{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-info text-white">
+        <h5 class="card-title mb-0"><i class="fas fa-plus-circle me-2"></i>إضافة معلم جديد</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('add_teacher') }}">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">اسم المعلم <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">البريد الإلكتروني <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="subject" class="form-label">المادة <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="subject" name="subject" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="school" class="form-label">المدرسة <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="school" name="school" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="grade" class="form-label">الصفوف</label>
+                        <select class="form-select" id="grade" name="grade" multiple>
+                            <option value="الأول ابتدائي">الأول ابتدائي</option>
+                            <option value="الثاني ابتدائي">الثاني ابتدائي</option>
+                            <option value="الثالث ابتدائي">الثالث ابتدائي</option>
+                            <option value="الرابع ابتدائي">الرابع ابتدائي</option>
+                            <option value="الخامس ابتدائي">الخامس ابتدائي</option>
+                            <option value="السادس ابتدائي">السادس ابتدائي</option>
+                            <option value="الأول متوسط">الأول متوسط</option>
+                            <option value="الثاني متوسط">الثاني متوسط</option>
+                            <option value="الثالث متوسط">الثالث متوسط</option>
+                            <option value="الأول ثانوي">الأول ثانوي</option>
+                            <option value="الثاني ثانوي">الثاني ثانوي</option>
+                            <option value="الثالث ثانوي">الثالث ثانوي</option>
+                        </select>
+                        <small class="form-text text-muted">اضغط Ctrl لاختيار أكثر من صف</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">رقم الهاتف</label>
+                        <input type="text" class="form-control" id="phone" name="phone">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">إضافة المعلم</button>
+            <a href="{{ url_for('teachers_list') }}" class="btn btn-secondary">إلغاء</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

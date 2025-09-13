@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}لوحة التحكم - نظام إدارة الزيارات{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0"><i class="fas fa-tachometer-alt me-2"></i>لوحة التحكم</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card text-center mb-3">
+                            <div class="card-body">
+                                <h1 class="display-4">{{ total_visits }}</h1>
+                                <p class="card-text">عدد الزيارات</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center mb-3">
+                            <div class="card-body">
+                                <h1 class="display-4">{{ teachers_count }}</h1>
+                                <p class="card-text">عدد المعلمين</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center mb-3">
+                            <div class="card-body">
+                                <h1 class="display-4">{{ supervisors_count }}</h1>
+                                <p class="card-text">عدد المشرفين</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center mb-3">
+                            <div class="card-body">
+                                <h1 class="display-4">5</h1>
+                                <p class="card-text">المدارس</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">أحدث الزيارات</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>المعلم</th>
+                                <th>المدرسة</th>
+                                <th>المادة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for visit in recent_visits %}
+                            <tr>
+                                <td>{{ visit.visit_date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ visit.teacher.name }}</td>
+                                <td>{{ visit.school_name }}</td>
+                                <td>{{ visit.subject }}</td>
+                                <td>
+                                    <a href="{{ url_for('generate_pdf', visit_id=visit.id) }}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-download"></i> PDF
+                                    </a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center">لا توجد زيارات مسجلة بعد</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">إجراءات سريعة</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('new_visit') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus-circle me-2"></i>زيارة جديدة
+                    </a>
+                    <a href="{{ url_for('visit_reports') }}" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-list me-2"></i>عرض التقارير
+                    </a>
+                    <a href="{{ url_for('teachers_list') }}" class="btn btn-info btn-lg">
+                        <i class="fas fa-chalkboard-teacher me-2"></i>إدارة المعلمين
+                    </a>
+                    <a href="{{ url_for('supervisors_list') }}" class="btn btn-warning btn-lg">
+                        <i class="fas fa-user-tie me-2"></i>إدارة المشرفين
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

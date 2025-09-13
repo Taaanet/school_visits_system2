@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}إضافة مشرف - نظام إدارة الزيارات{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-warning text-white">
+        <h5 class="card-title mb-0"><i class="fas fa-plus-circle me-2"></i>إضافة مشرف جديد</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('add_supervisor') }}">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">اسم المشرف <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">البريد الإلكتروني <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="specialty" class="form-label">التخصص <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="specialty" name="specialty" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">رقم الجوال</label>
+                        <input type="text" class="form-control" id="phone" name="phone">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">إضافة المشرف</button>
+            <a href="{{ url_for('supervisors_list') }}" class="btn btn-secondary">إلغاء</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

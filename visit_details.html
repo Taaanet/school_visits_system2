@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}تفاصيل الزيارة - نظام إدارة الزيارات{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0"><i class="fas fa-info-circle me-2"></i>تفاصيل الزيارة</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h5>المعلومات الأساسية</h5>
+                <p><strong>المدرسة:</strong> {{ visit.school_name }}</p>
+                <p><strong>التاريخ:</strong> {{ visit.visit_date.strftime('%Y-%m-%d') }}</p>
+                <p><strong>المعلم:</strong> {{ visit.teacher.name }}</p>
+                <p><strong>المشرف:</strong> {{ visit.supervisor.name }}</p>
+                <p><strong>المادة:</strong> {{ visit.subject }}</p>
+                <p><strong>الصف:</strong> {{ visit.grade }}</p>
+                <p><strong>عنوان الدرس:</strong> {{ visit.lesson_title }}</p>
+                <p><strong>حالة الزيارة:</strong> {{ visit.status }}</p>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h5>التغذية الراجعة</h5>
+            <div class="border p-3 rounded">
+                <p>{{ visit.feedback_1 }}</p>
+                {% if visit.feedback_2 %}
+                <hr>
+                <p>{{ visit.feedback_2 }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if visit.suggestions %}
+        <div class="mt-4">
+            <h5>التوصيات والمقترحات</h5>
+            <div class="border p-3 rounded">
+                <p>{{ visit.suggestions }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="mt-4">
+            <a href="{{ url_for('generate_pdf', visit_id=visit.id) }}" class="btn btn-primary">
+                <i class="fas fa-download me-2"></i>تحميل PDF
+            </a>
+            <a href="{{ url_for('send_visit_email', visit_id=visit.id) }}" class="btn btn-info">
+                <i class="fas fa-envelope me-2"></i>إرسال بالبريد
+            </a>
+            <a href="{{ url_for('visit_reports') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-right me-2"></i>العودة إلى القائمة
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

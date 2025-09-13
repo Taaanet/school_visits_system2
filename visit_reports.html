@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}تقارير الزيارات - نظام إدارة الزيارات{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0"><i class="fas fa-list me-2"></i>تقارير الزيارات</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>التاريخ</th>
+                        <th>المعلم</th>
+                        <th>المدرسة</th>
+                        <th>المادة</th>
+                        <th>المشرف</th>
+                        <th>الحالة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for visit in visits %}
+                    <tr>
+                        <td>{{ visit.visit_date.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ visit.teacher.name }}</td>
+                        <td>{{ visit.school_name }}</td>
+                        <td>{{ visit.subject }}</td>
+                        <td>{{ visit.supervisor.name }}</td>
+                        <td>
+                            {% if visit.status == 'مكتملة' %}
+                            <span class="badge bg-success">{{ visit.status }}</span>
+                            {% elif visit.status == 'معلقة' %}
+                            <span class="badge bg-warning">{{ visit.status }}</span>
+                            {% else %}
+                            <span class="badge bg-danger">{{ visit.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('generate_pdf', visit_id=visit.id) }}" class="btn btn-sm btn-info">
+                                <i class="fas fa-download"></i> PDF
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center">لا توجد زيارات مسجلة بعد</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
